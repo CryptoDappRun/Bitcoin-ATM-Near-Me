@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Leaflet GeoJSON Integration</title>
+  <title>Bitcoin ATM Near Me-Find Bitcoin Machine Near Me</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
       <!-- Bootstrap CSS -->
@@ -77,6 +77,12 @@
   </div>
 </nav>
 <!--********************Nav Bar******************************-->
+
+
+  <h5>Bitcoin to USD Conversion</h5>
+  <label for="btcAmount">Enter Bitcoin Amount: </label>
+  <input type="number" id="btcAmount" step="0.01" value="1">
+  <p id="conversionResult"></p>
 
 
   <div id="map" style="height: 80vh; border-radius: 15px;padding: 20px;margin:20px"></div>
@@ -225,6 +231,37 @@ L.geoJSON(europe, {
     }
   }
 }).addTo(map);
+
+
+
+
+
+    const btcAmountInput = document.getElementById('btcAmount');
+    const resultElement = document.getElementById('conversionResult');
+
+    function convertBitcoinToUsd() {
+      const bitcoinAmount = parseFloat(btcAmountInput.value);
+      if (!isNaN(bitcoinAmount)) {
+        fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
+          .then(response => response.json())
+          .then(data => {
+            const bitcoinToUsd = data.bitcoin.usd;
+            const usdAmount = bitcoinAmount * bitcoinToUsd;
+
+            resultElement.textContent = `${bitcoinAmount} BTC is approximately $${usdAmount.toFixed(2)} USD`;
+          })
+          .catch(error => {
+            console.error('Error fetching conversion rate:', error);
+          });
+      } else {
+        resultElement.textContent = 'Please enter a valid Bitcoin amount.';
+      }
+    }
+
+    btcAmountInput.addEventListener('input', convertBitcoinToUsd);
+
+    // Initial conversion
+    convertBitcoinToUsd();
 
 
 </script>
